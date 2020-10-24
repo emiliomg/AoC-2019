@@ -1,52 +1,33 @@
 package de.emiliomg.adventofcode.y2019.day1
 
+import de.emiliomg.adventofcode.y2019.getData
+
 import scala.annotation.tailrec
-import scala.io.Source
 
 /**
   * https://adventofcode.com/2019/day/1
   */
-object Day1 extends App {
+object Day1 {
 
-  assert(firstStar(List(12)) == 2)
-  assert(firstStar(List(14)) == 2)
-  assert(firstStar(List(1969)) == 654)
-  assert(firstStar(List(100756)) == 33583)
+  def parseData(data: List[String]): List[Int] = data.map(_.toInt)
 
-  assert(secondStar(List(14)) == 2)
-  assert(secondStar(List(1969)) == 966)
-  assert(secondStar(List(100756)) == 50346)
-
-  val data = parseData(getData("2019/1/input.txt"))
-
-  val firstStarResult  = firstStar(data)
-  val secondStarResult = secondStar(data)
-
-  println(s"Result first star: $firstStarResult")
-  println(s"Result second star: $secondStarResult")
-
-  assert(firstStarResult == 3502510)
-  assert(secondStarResult == 5250885)
+  val data: List[Int] = parseData(getData("2019/1/input.txt"))
 
   def firstStar(data: List[Int]): Int =
     data.map(calculateFuelForMass).sum
 
   def secondStar(data: List[Int]): Int = {
     @tailrec
-    def calculateFuel(newMass: Int, baseMass: Int): Double = {
+    def calculateFuel(newMass: Int, baseMass: Int): Int = {
       calculateFuelForMass(newMass) match {
         case newFuel if newFuel >= 0 => calculateFuel(newFuel, baseMass + newFuel)
-        case newFuel                 => baseMass
+        case _                       => baseMass
       }
     }
     data.map(mass => calculateFuel(mass, 0))
-  }.sum.toInt
+  }.sum
 
   def calculateFuelForMass(mass: Int): Int = {
-    (Math.floor(mass / 3) - 2).toInt
+    (Math.floor(mass.toDouble / 3) - 2).toInt
   }
-
-  def getData(path: String): List[String] = Source.fromResource(path).getLines().toList
-
-  def parseData(data: List[String]): List[Int] = data.map(_.toInt)
 }
