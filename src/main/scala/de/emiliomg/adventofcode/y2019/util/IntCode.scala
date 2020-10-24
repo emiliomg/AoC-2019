@@ -7,6 +7,11 @@ import scala.annotation.tailrec
 import scala.collection.immutable.ArraySeq
 
 case object IntCode {
+
+  def compute(state: State, noun: Int, verb: Int): State = {
+    compute(applyNounAndVerb(state, noun, verb))
+  }
+
   @tailrec
   def compute(state: State): State = {
     state.memory(state.instructionPointer) match {
@@ -15,6 +20,12 @@ case object IntCode {
       case Instruction.Termination.value    => state
       case _                                => throw InvalidInstructionException(state)
     }
+  }
+
+  protected[util] def applyNounAndVerb(state: State, noun: Int, verb: Int): State = {
+    require(0.to(99).contains(noun))
+    require(0.to(99).contains(verb))
+    state.copy(memory = state.memory.updated(1, noun).updated(2, verb))
   }
 
   case class State(instructionPointer: Int, memory: ArraySeq[Int])
