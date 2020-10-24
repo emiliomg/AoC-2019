@@ -112,7 +112,7 @@ class IntCodeTest extends AnyFunSpec with Matchers with TableDrivenPropertyCheck
         }
 
         it("should go boom when fetching parameters that are not in the instruction set") {
-          val state  = State(instructionPointer = 2, instructions = ArraySeq(0, 1, 2, 3))
+          val state  = State(instructionPointer = 2, memory = ArraySeq(0, 1, 2, 3))
           val thrown = the[ParameterNotAvailableException] thrownBy TestableInstruction.getParameters(state, 2)
           thrown.getMessage should include("position 4")
           thrown.getMessage should include("State(2,ArraySeq(0, 1, 2, 3))")

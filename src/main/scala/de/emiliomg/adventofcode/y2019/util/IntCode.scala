@@ -9,7 +9,7 @@ import scala.collection.immutable.ArraySeq
 case object IntCode {
   @tailrec
   def compute(state: State): State = {
-    state.instructions(state.instructionPointer) match {
+    state.memory(state.instructionPointer) match {
       case Instruction.Addition.value       => compute(Instruction.Addition.compute(state))
       case Instruction.Multiplication.value => compute(Instruction.Multiplication.compute(state))
       case Instruction.Termination.value    => state
@@ -17,7 +17,7 @@ case object IntCode {
     }
   }
 
-  case class State(instructionPointer: Int, instructions: ArraySeq[Int])
+  case class State(instructionPointer: Int, memory: ArraySeq[Int])
 
   sealed abstract class Instruction(val value: Int) extends IntEnumEntry
 
@@ -53,6 +53,6 @@ case object IntCode {
   case class InvalidInstructionException(state: State)
       extends Exception(
         s"Invalid computing instruction found on position ${state.instructionPointer} (${state
-          .instructions(state.instructionPointer)}) - $state"
+          .memory(state.instructionPointer)}) - $state"
       )
 }

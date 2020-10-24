@@ -10,11 +10,11 @@ object InstructionHelpers {
 
   trait InstructionComputationIsArithmetic { _: InstructionHasParameters =>
     def getArithmeticResult(state: State, amountOfParameters: Int, f: (Int, Int) => Int): State = {
-      val parameters        = getParameters(state, amountOfParameters)
-      val result            = f(parameters(1).value, parameters(2).value)
-      val updatedParameters = state.instructions.updated(parameters(3).position, result)
+      val parameters    = getParameters(state, amountOfParameters)
+      val result        = f(parameters(1).value, parameters(2).value)
+      val updatedMemory = state.memory.updated(parameters(3).position, result)
 
-      state.copy(instructionPointer = state.instructionPointer + amountOfParameters + 1, updatedParameters)
+      state.copy(instructionPointer = state.instructionPointer + amountOfParameters + 1, memory = updatedMemory)
     }
   }
 
@@ -24,7 +24,7 @@ object InstructionHelpers {
         .toList
         .map { parameterNumber =>
           val instructionParameterAddress = state.instructionPointer + parameterNumber
-          val instructionParameterAddressValue = state.instructions
+          val instructionParameterAddressValue = state.memory
             .lift(instructionParameterAddress)
             .getOrElse(
               throw ParameterNotAvailableException(
@@ -33,7 +33,7 @@ object InstructionHelpers {
                 instructionParameterAddress
               )
             )
-          val instructionParameterValue = state.instructions
+          val instructionParameterValue = state.memory
             .lift(instructionParameterAddressValue)
             .getOrElse(
               throw ParameterNotAvailableException(

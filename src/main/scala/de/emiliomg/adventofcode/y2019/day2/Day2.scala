@@ -16,10 +16,10 @@ object Day2 {
   val data: State = parseData(getData("2019/2/input.txt").mkString(","))
 
   def firstStar(data: State): Int = {
-    val fixedData = data.copy(instructions = data.instructions.updated(1, 12).updated(2, 2))
+    val fixedData = data.copy(memory = data.memory.updated(1, 12).updated(2, 2))
     val computed  = IntCode.compute(fixedData)
 
-    computed.instructions(0)
+    computed.memory(0)
   }
 
   def secondStar(data: State) = {
