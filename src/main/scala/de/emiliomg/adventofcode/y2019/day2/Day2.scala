@@ -16,11 +16,18 @@ object Day2 {
   val data: State = parseData(getData("2019/2/input.txt").mkString(","))
 
   def firstStar(data: State): Int = {
-    val computed = IntCode.compute(data, 12, 2)
-    computed.memory(0)
+    val computed: State = IntCode.compute(data, 12, 2)
+    computed.getOutput
   }
 
-  def secondStar(data: State) = {
-    ???
+  def secondStar(data: State): Int = {
+    val searchingFor = 19690720
+    val (noun, verb) = (for {
+      noun <- 0.to(99)
+      verb <- 0.to(99)
+      if IntCode.compute(data, noun, verb).getOutput == searchingFor
+    } yield (noun, verb)).head
+
+    (100 * noun) + verb
   }
 }

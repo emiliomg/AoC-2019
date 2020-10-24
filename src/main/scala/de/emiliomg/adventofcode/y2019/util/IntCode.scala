@@ -28,7 +28,9 @@ case object IntCode {
     state.copy(memory = state.memory.updated(1, noun).updated(2, verb))
   }
 
-  case class State(instructionPointer: Int, memory: ArraySeq[Int])
+  case class State(instructionPointer: Int, memory: ArraySeq[Int]) {
+    def getOutput: Int = memory(0)
+  }
 
   sealed abstract class Instruction(val value: Int) extends IntEnumEntry
 
