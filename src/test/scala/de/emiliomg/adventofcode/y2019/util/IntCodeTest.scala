@@ -1,6 +1,6 @@
 package de.emiliomg.adventofcode.y2019.util
 
-import de.emiliomg.adventofcode.y2019.util.IntCode.State
+import de.emiliomg.adventofcode.y2019.util.IntCode.{InvalidInstructionException, State}
 import de.emiliomg.adventofcode.y2019.util.intcode.InstructionHelpers._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
@@ -11,6 +11,26 @@ import scala.collection.immutable.ArraySeq
 class IntCodeTest extends AnyFunSpec with Matchers with TableDrivenPropertyChecks {
 
   describe("IntCode") {
+    describe("Computation") {
+      it("should completely process given instructions") {
+        val testCases = Table(
+          ("initial state", "final state"),
+          (State(0, ArraySeq(1, 0, 0, 0, 99)), State(4, ArraySeq(2, 0, 0, 0, 99))), // simple addition
+          (State(0, ArraySeq(2, 3, 0, 3, 99)), State(4, ArraySeq(2, 3, 0, 6, 99))), // simple multiplication
+          (State(0, ArraySeq(2, 4, 4, 5, 99, 0)), State(4, ArraySeq(2, 4, 4, 5, 99, 9801))),
+          (State(0, ArraySeq(1, 1, 1, 4, 99, 5, 6, 0, 99)), State(8, ArraySeq(30, 1, 1, 4, 2, 5, 6, 0, 99)))
+        )
+        forAll(testCases) { (input, expectedOutput) =>
+          IntCode.compute(input) shouldEqual expectedOutput
+        }
+      }
+      it("should throw an exception on encountering an invalid instruction during the execution") {
+        val testMe = State(0, ArraySeq(1, 0, 0, 0, 123, 99))
+        val thrown = the[InvalidInstructionException] thrownBy IntCode.compute(testMe)
+        thrown.getMessage should include("position 4 (123)")
+        thrown.getMessage should include("(2, 0, 0, 0, 123, 99)")
+      }
+    }
     describe("Instruction") {
       describe("Addition") {
         it("should compute correctly") {
@@ -100,29 +120,7 @@ class IntCodeTest extends AnyFunSpec with Matchers with TableDrivenPropertyCheck
       }
     }
 
-//  val testCases: TableFor2[ArraySeq[Int], ArraySeq[Int]] = Table(
-//    ("initial instructions", "expected computed instructions"),
-//    (ArraySeq(1, 0, 0, 0, 99), ArraySeq(2, 0, 0, 0, 99)), // simple addition
-//    (ArraySeq(2, 3, 0, 3, 99), ArraySeq(2, 3, 0, 6, 99)), // simple multiplication
-//    (ArraySeq(2, 4, 4, 5, 99, 0), ArraySeq(2, 4, 4, 5, 99, 9801)),
-//    (ArraySeq(1, 1, 1, 4, 99, 5, 6, 0, 99), ArraySeq(30, 1, 1, 4, 2, 5, 6, 0, 99))
-//  )
-//
-
   }
-//  should "parse example instruction sets" in {
-//    forAll(testCases) { (input, expected) =>
-//      val testme = IntCode(0, input)
-//      testme.compute.instructions shouldEqual expected
-//    }
-//  }
-//
-//  it should "throw an exception on encountering an invalid instruction during the execution" in {
-//    val testMe = IntCode(0, ArraySeq(1, 0, 0, 0, 123, 99))
-//    val thrown = the[InvalidInstructionException] thrownBy testMe.compute
-//    thrown.getMessage should include("position 4 (123)")
-//    thrown.getMessage should include("(2,0,0,0,123,99)")
-//  }
 
   case object TestableInstruction extends InstructionHasParameters {}
 }
