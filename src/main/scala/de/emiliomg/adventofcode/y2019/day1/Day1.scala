@@ -9,14 +9,14 @@ import scala.annotation.tailrec
   */
 object Day1 {
 
-  def parseData(data: List[String]): List[Int] = data.map(_.toInt)
+  def parseData(data: Array[String]): Array[Int] = data.map(_.toInt)
 
-  val data: List[Int] = parseData(getData("2019/1/input.txt"))
+  val data: Array[Int] = parseData(getData("2019/1/input.txt"))
 
-  def firstStar(data: List[Int]): Int =
+  def firstStar(data: Array[Int]): Int =
     data.map(calculateFuelForMass).sum
 
-  def secondStar(data: List[Int]): Int = {
+  def secondStar(data: Array[Int]): Int = {
     @tailrec
     def calculateFuel(newMass: Int, baseMass: Int): Int = {
       calculateFuelForMass(newMass) match {
